@@ -2,7 +2,6 @@
 #define SENSOR_H
 
 void setupSensor();
-float getTemperatureAsFloat();
-float getRelativeHumidity();
+int loopSensor();
 
 #endif

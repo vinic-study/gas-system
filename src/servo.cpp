@@ -38,3 +38,7 @@ void iniciateRotation() {
         }
     }
 }
+
+void stopRotation() {
+    serv.write(0);
+}

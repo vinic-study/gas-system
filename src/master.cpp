@@ -1,16 +1,13 @@
 #include <Arduino.h>
 #include <BluetoothSerial.h>
 #include <Sensor.h>
-#include <Lcd.h>
 #include <json.h>
 #include "led.h"
-
 #include <servo.h>
 
 BluetoothSerial BTSerial;
 
-float lastHumidity = 0;
-float lastTemperature = 0;
+int gasIntensity = -999;
 
 u_int8_t slaveAddress[] = {0xF4, 0x65, 0x0B, 0x47, 0x1D, 0x6A};
 
@@ -18,43 +15,44 @@ void setupMaster(){
     Serial.begin(9600);
     Serial.setTimeout(5000);
 
-    servSetup();
-    setupLCD();
     setupLED(2);
 
     if (BTSerial.begin("webvinicDevice", true))
     {
-        Serial.println("Bluetooth (Master) iniciado com sucesso");
+        Serial.println("Bluetooth (Master) started successfully");
     } else
     {
-        Serial.println("Erro ao iniciar o bluetooth");
+        Serial.println("Error initializing Bluetooth");
     }
 
-    Serial.println("Tentando conectar ao Slave...");
+    Serial.println("Attempting to connect to Slave...");
     if (BTSerial.connect(slaveAddress))
     {
-        Serial.println("Conectado com sucesso");
+        Serial.println("Connected successfully");
     } else {
-        Serial.println("Falha ao conectar");
+        Serial.println("Failed to connect");
     }
 
     setupSensor();
-    setupLCD();
 }
 
 void loopMaster(){
 
-    iniciateRotation();
-    blinkLed(2);
+    int sensorGas = loopSensor();
 
-    float temperature = getTemperatureAsFloat();
-    float humidity = getRelativeHumidity();
+    if (sensorGas > 100 && sensorGas != gasIntensity) {
+        String data = parseToJson(true);
+        Serial.println(data);
+        BTSerial.println(data);
+
+        gasIntensity = sensorGas;
+    }
 
     if (BTSerial.available())
     {
         String receivedMessage = BTSerial.readStringUntil('\n');
         receivedMessage.trim();
-        Serial.printf("Mensagem recebida: %s\n", receivedMessage.c_str());
+        Serial.printf("Message received: %s\n", receivedMessage.c_str());
     }
 
     if (Serial.available())
@@ -62,37 +60,5 @@ void loopMaster(){
         String messageToSend = Serial.readStringUntil('\n');
         messageToSend.trim();
         BTSerial.println(messageToSend);
-    }
-
-    if (temperature != lastTemperature) {
-        String message = "[TEMPERATURA] " + String(temperature, 2);
-        Serial.println(message);
-
-        float temperatureInF = (temperature * 1.8) + 32; 
-        String data = parseToJson(humidity, temperature, temperatureInF);
-        Serial.println(data);
-
-        lastTemperature = temperature;
-        lastHumidity = humidity;
-
-        BTSerial.println(data);
-
-        displayData(temperature, humidity, temperatureInF);
-    }
-
-    if (humidity != lastHumidity) {
-        String message = "[UMIDADE] " + String(humidity, 2);
-        Serial.println(message);
-
-        float temperatureInF = (temperature * 1.8) + 32; 
-        String data = parseToJson(temperature, temperatureInF, humidity);
-        Serial.println(data);
-
-        lastTemperature = temperature;
-        lastHumidity = humidity;
-
-        BTSerial.println(data);
-
-        displayData(temperature, humidity, temperatureInF);
     }
 }

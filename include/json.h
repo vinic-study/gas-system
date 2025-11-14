@@ -4,7 +4,7 @@
 #ifndef JSON_H
 #define JSON_H
 
-String parseToJson(float humidity, float temperatureInC, float temperatureInF);
+String parseToJson(bool limit);
 JsonDocument parseToString(String data);
 
 #endif

@@ -54,7 +54,7 @@ void loopSlave() {
                 Serial.printf("Gas %2.f", gasLimit);
 
             } else {
-                Serial.println("Erro: JSON recebido não contém as chaves 'umidity' ou 'temperatureInC'");
+                Serial.println("Erro: JSON recebido não contém as chaves.'");
             }
         }
     }

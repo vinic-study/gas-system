@@ -1,12 +1,10 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
-String parseToJson(float humidity, float temperatureInC, float temperatureInF) {
+String parseToJson(bool limit) {
 	JsonDocument doc;
 
-	doc["humidity"] = humidity;
-	doc["temperatureInC"] = temperatureInC;
-	doc["temperatureInF"] = temperatureInF;
+	doc["gasLimit"] = limit;
 
 	String jsonString;
 	serializeJson(doc, jsonString);
