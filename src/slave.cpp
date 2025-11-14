@@ -8,6 +8,7 @@
 BluetoothSerial BTSlave;
 
 float gasLimit = false;
+bool lastState = false;
 
 void setupSlave() {
     Serial.begin(9600);
@@ -43,9 +44,11 @@ void loopSlave() {
 
                 gasLimit = doc["gasLimit"];
 
-                if (gasLimit) {
-                    iniciateRotation();
+                if (gasLimit == true) {
+                    iniciateRotation(lastState);
                     blinkLed(2);
+
+                    lastState = !lastState;
                 } else {
                     stopRotation();
                     turnOffLED(2);

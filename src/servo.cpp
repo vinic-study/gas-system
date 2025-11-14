@@ -13,7 +13,6 @@ int direction = 1;
 
 unsigned long previousMillis = 0;
 const long interval = 1000;
-int servoState = 0;
 
 void servSetup() {
     Serial.begin(9600);
@@ -23,18 +22,16 @@ void servSetup() {
     Serial.println("Servo ready. Starting cycle...");
 }
 
-void iniciateRotation() {
+void iniciateRotation(bool lastState) {
     unsigned long currentMillis = millis();
 
     if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
 
-        if (servoState == 0) {
+        if (lastState == 0) {
             serv.write(maxAngle);
-            servoState = 1;
         } else {
             serv.write(minAngle);
-            servoState = 0;
         }
     }
 }

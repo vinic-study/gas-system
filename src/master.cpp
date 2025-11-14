@@ -8,8 +8,7 @@
 BluetoothSerial BTSerial;
 
 int gasIntensity = -999;
-
-u_int8_t slaveAddress[] = {0xF4, 0x65, 0x0B, 0x47, 0x1D, 0x6A};
+u_int8_t slaveAddress[] = {0x14, 0x33, 0x5C, 0x52, 0x23, 0xEA};
 
 void setupMaster(){
     Serial.begin(9600);

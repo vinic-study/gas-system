@@ -3,7 +3,7 @@
 
 void servSetup();
 
-void iniciateRotation();
+void iniciateRotation(bool lastState);
 void stopRotation();
 
 #endif
